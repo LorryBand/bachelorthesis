@@ -20,9 +20,9 @@ const HistoryCard = () => {
     },
     {
       image: Nft2,
-      title: "Abstract Colors",
-      owner: "Esthera Jackson",
-      price: 2.4,
+      title: "SEHM v1",
+      owner: "SEHM Systems",
+      price: 1,
       time: "50m",
     },
     {
