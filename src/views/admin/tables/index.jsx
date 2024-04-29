@@ -22,19 +22,6 @@ const Tables = () => {
           columnsData={columnsDataDevelopment}
           tableData={tableDataDevelopment}
         />
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
-      </div>
-
-      <div className="mt-5 grid h-full grid-cols-1 gap-5 md:grid-cols-2">
-        <ColumnsTable
-          columnsData={columnsDataColumns}
-          tableData={tableDataColumns}
-        />
-
-        <ComplexTable
-          columnsData={columnsDataComplex}
-          tableData={tableDataComplex}
-        />
       </div>
     </div>
   );
