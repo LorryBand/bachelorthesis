@@ -1,6 +1,8 @@
 import MiniCalendar from "components/calendar/MiniCalendar";
 import WeeklyRevenue from "views/admin/default/components/WeeklyRevenue";
 import TemperatureCard from "views/admin/default/components/TemperatureCard";
+import HumidityCard from "views/admin/default/components/HumidityCard";
+import CO2Card from "views/admin/default/components/CO2Card";
 import PieChartCard from "views/admin/default/components/PieChartCard";
 import { IoMdHome } from "react-icons/io";
 import { IoDocuments } from "react-icons/io5";
@@ -58,14 +60,14 @@ const Dashboard = () => {
 
       <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
         <TemperatureCard />
-        <TemperatureCard />
+        <HumidityCard />
       </div>
 
       {/* Tables & Charts */}
 
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-2">
         {/* Check Table */}
-        <TemperatureCard />
+        <CO2Card />
 
         {/* Traffic chart & Pie Chart */}
 
