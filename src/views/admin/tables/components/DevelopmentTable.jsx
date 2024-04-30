@@ -9,8 +9,10 @@ import {
   MessageInput,
   MessageContainer,
   MessageList,
-  MessageHeader
+  MessageHeader,
+  MinChatUI
 } from "@minchat/react-chat-ui";
+
 
 import React, { useMemo } from "react";
 import {
@@ -23,6 +25,7 @@ import Progress from "components/progress";
 
 const DevelopmentTable = (props) => {
   const myColorSet = {
+    
     // input
     "--input-background-color": "#FF0000",
     "--input-text-color": "#fff",
@@ -80,24 +83,33 @@ const DevelopmentTable = (props) => {
 }
 
   return (
-    <MinChatUiProvider theme="#6ea9d7">
-      <MainContainer style={{ height: '100vh' }}>
-        <MessageContainer>
+    
+    <MinChatUiProvider theme="myColorSet"  >
+      <MainContainer style={{ height: '80vh' }}  >
+        <MessageContainer >
           <MessageHeader />
           <MessageList
-            currentUserId='dan'
+            currentUserId='User'
             messages={[{
-              text: 'Hello',
+              text: 'Hi',
               user: {
                 id: 'mark',
-                name: 'Markus',
+                name: 'Yura',
+              },
+            },
+            {
+              text: 'Hi',
+              user: {
+                id: 'User',
+                name: '',
               },
             }]}
           />
-          <MessageInput placeholder="Type message here" />
+          <MessageInput showAttachButton={false} placeholder="Start typing" />
         </MessageContainer>
       </MainContainer>
     </MinChatUiProvider>
+
   )
 };
 
