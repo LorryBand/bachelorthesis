@@ -1,7 +1,7 @@
 import React from "react";
 import Dropdown from "components/dropdown";
 import { FiAlignJustify } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import navbarimage from "assets/img/layout/Navbar.png";
 import { BsArrowBarUp } from "react-icons/bs";
 
@@ -11,10 +11,21 @@ import {
   IoMdInformationCircleOutline,
 } from "react-icons/io";
 import avatar from "assets/img/avatars/avatar4.png";
+import { useDispatch, useSelector } from "react-redux";
+import { logout, selectIsAuth } from "../../redux/slices/auth";
 
 const Navbar = (props) => {
   const { onOpenSidenav, brandText } = props;
   const [darkmode, setDarkmode] = React.useState(false);
+  const isAuth = useSelector(selectIsAuth);
+  const dispatch = useDispatch();
+
+  const onClickLogout = () => {
+    if (window.confirm("Вы действительно хотите выйти?")) {
+      dispatch(logout());
+      window.localStorage.removeItem("token");
+    }
+  };
 
   return (
     <nav className="sticky top-4 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl bg-white/10 p-2 backdrop-blur-xl dark:bg-[#0b14374d]">
@@ -48,7 +59,6 @@ const Navbar = (props) => {
       </div>
 
       <div className="relative mt-[3px] flex h-[61px] w-[355px] flex-grow items-center justify-around gap-2 rounded-full bg-white px-2 py-2 shadow-xl shadow-shadow-500 dark:!bg-navy-800 dark:shadow-none md:w-[365px] md:flex-grow-0 md:gap-1 xl:w-[365px] xl:gap-2">
-        
         <span
           className="flex cursor-pointer text-xl text-gray-600 dark:text-white xl:hidden"
           onClick={onOpenSidenav}
@@ -69,7 +79,7 @@ const Navbar = (props) => {
                 <p className="text-base font-bold text-navy-700 dark:text-white">
                   Notifications
                 </p>
-{/*                 <p className="text-sm font-bold text-navy-700 dark:text-white">
+                {/*                 <p className="text-sm font-bold text-navy-700 dark:text-white">
                   Mark all read
                 </p> */}
               </div>
@@ -83,7 +93,7 @@ const Navbar = (props) => {
                     New Update: SEHM
                   </p>
                   <p className="font-base text-left text-xs text-gray-900 dark:text-white">
-                  SEHM
+                    SEHM
                   </p>
                 </div>
               </button>
@@ -97,7 +107,7 @@ const Navbar = (props) => {
                     New Update: SEHM
                   </p>
                   <p className="font-base text-left text-xs text-gray-900 dark:text-white">
-                  SEHM
+                    SEHM
                   </p>
                 </div>
               </button>
@@ -114,7 +124,6 @@ const Navbar = (props) => {
           }
           children={
             <div className="flex w-[350px] flex-col gap-2 rounded-[20px] bg-white p-4 shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
-              
               <a
                 target="blank"
                 className="px-full linear flex cursor-pointer items-center justify-center rounded-xl bg-brand-500 py-[11px] font-bold text-white transition duration-200 hover:bg-brand-600 hover:text-white active:bg-brand-700 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:bg-brand-200"
@@ -177,18 +186,16 @@ const Navbar = (props) => {
               <div className="h-px w-full bg-gray-200 dark:bg-white/20 " />
 
               <div className="flex flex-col p-4">
-                <a
-                  href=" "
-                  className="text-sm text-gray-800 dark:text-white hover:dark:text-white"
-                >
+                <span className="text-sm text-gray-800 dark:text-white hover:dark:text-white">
                   Profile Settings
-                </a>
-                <a
-                  href=" "
-                  className="mt-3 text-sm font-medium text-red-500 hover:text-red-500 transition duration-150 ease-out hover:ease-in"
-                >
-                  Log Out
-                </a>
+                </span>
+                {isAuth ? (
+                  <span onClick={()=>onClickLogout()} className="mt-3 text-sm font-medium text-red-500 transition duration-150 ease-out hover:text-red-500 hover:ease-in pointer cursor-pointer">
+                    Log Out
+                  </span>
+                ) : (
+                  <></>
+                )}
               </div>
             </div>
           }
