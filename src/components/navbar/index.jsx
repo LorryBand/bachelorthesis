@@ -12,16 +12,14 @@ import {
 import avatar from "assets/img/avatars/avatar4.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectIsAuth } from "../../redux/slices/auth";
+import { disableDarkMode, enableDarkMode } from "../../redux/slices/theme";
 
 const Navbar = (props) => {
   const { onOpenSidenav, brandText } = props;
   const [darkmode, setDarkmode] = useState(false);
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
-  const userData = useSelector(
-    (state) => state.auth.data
-  );
-
+  const userData = useSelector((state) => state.auth.data);
   const onClickLogout = () => {
     if (window.confirm("Вы действительно хотите выйти?")) {
       dispatch(logout());
@@ -154,9 +152,11 @@ const Navbar = (props) => {
           onClick={() => {
             if (darkmode) {
               document.body.classList.remove("dark");
+              dispatch(disableDarkMode());
               setDarkmode(false);
             } else {
               document.body.classList.add("dark");
+              dispatch(enableDarkMode());
               setDarkmode(true);
             }
           }}
