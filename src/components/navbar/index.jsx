@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import Dropdown from "components/dropdown";
 import { FiAlignJustify } from "react-icons/fi";
-import { Link, Navigate } from "react-router-dom";
-import navbarimage from "assets/img/layout/Navbar.png";
+import { Link } from "react-router-dom";
 import { BsArrowBarUp } from "react-icons/bs";
 
 import { RiMoonFill, RiSunFill } from "react-icons/ri";
@@ -16,9 +15,12 @@ import { logout, selectIsAuth } from "../../redux/slices/auth";
 
 const Navbar = (props) => {
   const { onOpenSidenav, brandText } = props;
-  const [darkmode, setDarkmode] = React.useState(false);
+  const [darkmode, setDarkmode] = useState(false);
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
+  const userData = useSelector(
+    (state) => state.auth.data
+  );
 
   const onClickLogout = () => {
     if (window.confirm("Вы действительно хотите выйти?")) {
@@ -179,20 +181,28 @@ const Navbar = (props) => {
               <div className="p-4">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-bold text-navy-700 dark:text-white">
-                    Welcome, Adela
+                    Welcome, {isAuth ? <>{userData.fullName}</> : <>Guest</>}
                   </p>{" "}
                 </div>
               </div>
-              <div className="h-px w-full bg-gray-200 dark:bg-white/20 " />
-
+              {isAuth ? (
+                <div className="h-px w-full bg-gray-200 dark:bg-white/20 " />
+              ) : (
+                <></>
+              )}
               <div className="flex flex-col p-4">
-                <span className="text-sm text-gray-800 dark:text-white hover:dark:text-white">
-                  Profile Settings
-                </span>
                 {isAuth ? (
-                  <span onClick={()=>onClickLogout()} className="mt-3 text-sm font-medium text-red-500 transition duration-150 ease-out hover:text-red-500 hover:ease-in pointer cursor-pointer">
-                    Log Out
-                  </span>
+                  <>
+                    <span className="text-sm text-gray-800 dark:text-white hover:dark:text-white">
+                      Profile Settings
+                    </span>
+                    <span
+                      onClick={() => onClickLogout()}
+                      className="pointer mt-3 cursor-pointer text-sm font-medium text-red-500 transition duration-150 ease-out hover:text-red-500 hover:ease-in"
+                    >
+                      Log Out
+                    </span>
+                  </>
                 ) : (
                   <></>
                 )}
