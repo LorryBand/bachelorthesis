@@ -1,10 +1,16 @@
 import React from "react";
-import avatar from "assets/img/avatars/avatar11.png";
 import defaultavatar from "assets/img/avatars/avatar2.png";
 import banner from "assets/img/profile/banner.png";
 import Card from "components/card";
+import { useSelector } from "react-redux";
+import { selectIsAuth } from "../../../../redux/slices/auth";
 
 const Banner = () => {
+  const isAuth = useSelector(selectIsAuth);
+  const userData = useSelector(
+    (state) => state.auth.data
+  );
+
   return (
     <Card extra={"items-center w-full h-full p-[16px] bg-cover"}>
       {/* Background and profile */}
@@ -20,7 +26,7 @@ const Banner = () => {
       {/* Name and position */}
       <div className="mt-16 flex flex-col items-center">
         <h4 className="text-xl font-bold text-navy-700 dark:text-white">
-          Yura Z
+          {isAuth ? <>{userData.fullName}</> : <>Guest</>}
         </h4>
         <p className="text-base font-normal text-gray-600">Junior+++</p>
       </div>
