@@ -1,24 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import DashIcon from "components/icons/DashIcon";
 import { useSelector } from "react-redux";
 import { selectIsAuth } from "./../../../redux/slices/auth";
 
 export function SidebarLinks(props) {
+  const { routes } = props;
+
   let location = useLocation();
   const isAuth = useSelector(selectIsAuth);
+  const [links, setLinks] = useState([]);
 
-  const { routes } = props;
+  useEffect(() => {
+    if(isAuth) { 
+      const endIndex = isAuth ? routes.length - 1 : routes.length;
+      const linkArrayAuth = routes.slice(0, endIndex);
+      setLinks(linkArrayAuth);
+    } 
+    if(!isAuth) {
+      const linkArrayAuth = [routes[0], routes[routes.length - 1]]
+      setLinks(linkArrayAuth);
+    }
+  }, [isAuth, routes]);
 
   const activeRoute = (routeName) => {
     return location.pathname.includes(routeName);
   };
 
   const createLinks = (routes) => {
-    // Determine the range of links to render based on isAuth
-    const endIndex = isAuth ? routes.length - 1 : routes.length;
 
-    return routes.slice(0, endIndex).map((route, index) => {
+    return links.map((route, index) => {
       if (
         route.layout === "/admin" ||
         route.layout === "/auth" ||
