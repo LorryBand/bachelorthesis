@@ -12,6 +12,8 @@ import {
   MessageHeader,
   MinChatUI
 } from "@minchat/react-chat-ui";
+import io from "socket.io-client";
+import {useState, useEffect} from 'react';
 
 
 import React, { useMemo } from "react";
@@ -22,93 +24,52 @@ import {
   useTable,
 } from "react-table";
 import Progress from "components/progress";
+const socket = io.connect("http://localhost:4445");
 
 const DevelopmentTable = (props) => {
-  const myColorSet = {
-    
-    // input
-    "--input-background-color": "#FF0000",
-    "--input-text-color": "#fff",
-    "--input-element-color": "rgb(0, 0, 255)",
-    "--input-attach-color": "#fff",
-    "--input-send-color": "#fff",
-    "--input-placeholder-color": "rgb(255, 255, 255)",
+  
+  const [room, setRoom] = useState("");
 
-    // message header
-    "--message-header-background-color": "#FF0000",
-    "--message-header-text-color": "#fff",
-    "--message-header-last-active-color": "rgb(0, 0, 255)",
-    "--message-header-back-color": "rgb(255, 255, 255)",
+  // Messages States
+  const [message, setMessage] = useState("");
+  const [messageReceived, setMessageReceived] = useState("");
 
-    // chat list header
-    "--chatlist-header-background-color": "#FF0000",
-    "--chatlist-header-text-color": "rgb(255, 255, 255)",
-    "--chatlist-header-divider-color": "rgb(0, 128, 0)",
+  const joinRoom = () => {
+      socket.emit("join_room", room);
+  };
 
-    //chatlist
-    "--chatlist-background-color": "rgb(255, 192, 203)",
-    "--no-conversation-text-color": "rgb(255, 255, 255)",
+  const sendMessage = () => {
+    socket.emit("send_message", { message, room });
+  };
 
-    //chat item
-    "--chatitem-background-color": "rgb(0, 0, 255)",
-    "--chatitem-selected-background-color": "rgb(255, 255, 0)",
-    "--chatitem-title-text-color": "#FF0000",
-    "--chatitem-content-text-color": "#FF0000",
-    "--chatitem-hover-color": "#FF0000",
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      setMessageReceived(data.message);
+    });
+  }, [socket]);
 
-    //main container
-    "--container-background-color": "rgb(255, 192, 203)",
 
-    //loader
-    "--loader-color": "rgb(0, 128, 0)",
-
-    //message list
-    "--messagelist-background-color": "rgb(0, 0, 255)",
-    "--no-message-text-color": "rgb(255, 255, 255)",
-
-    // incoming message
-    "--incoming-message-text-color": "rgb(255, 255, 255)",
-    "--incoming-message-name-text-color": "rgb(255, 255, 255)",
-    "--incoming-message-background-color": "rgb(0, 128, 0)",
-    "--incoming-message-timestamp-color": "rgb(255, 255, 255)",
-    "--incoming-message-link-color": "#FF0000",
-    
-    //outgoing message
-    "--outgoing-message-text-color": "#FF0000",
-    "--outgoing-message-background-color": "rgb(255, 255, 0)",
-    "--outgoing-message-timestamp-color": "#FF0000",
-    "--outgoing-message-checkmark-color": "#FF0000",
-    "--outgoing-message-loader-color": "#FF0000",
-    "--outgoing-message-link-color": "rgb(0, 128, 0)",
-}
 
   return (
     
-    <MinChatUiProvider theme="myColorSet"  >
-      <MainContainer style={{ height: '80vh' }}  >
-        <MessageContainer >
-          <MessageHeader />
-          <MessageList
-            currentUserId='User'
-            messages={[{
-              text: 'Hi',
-              user: {
-                id: 'mark',
-                name: 'Yura',
-              },
-            },
-            {
-              text: 'Hi',
-              user: {
-                id: 'User',
-                name: '',
-              },
-            }]}
-          />
-          <MessageInput showAttachButton={false} placeholder="Start typing" />
-        </MessageContainer>
-      </MainContainer>
-    </MinChatUiProvider>
+    <div >
+      <input
+        placeholder="Room Number..."
+        onChange={(event) => {
+          setRoom(event.target.value);
+        }}
+      />
+      <button onClick={joinRoom}> Join Room</button>
+      <input
+        placeholder="Message..."
+        onChange={(event) => {
+          setMessage(event.target.value);
+        }}
+      />
+      <button onClick={sendMessage}> Send Message</button>
+      <h1> Message:</h1>
+      {messageReceived}
+    </div>
 
   )
 };
