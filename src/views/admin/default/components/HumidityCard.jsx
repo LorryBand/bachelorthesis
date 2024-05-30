@@ -1,29 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   MdArrowDropUp,
   MdOutlineCalendarToday,
   MdBarChart,
 } from "react-icons/md";
 import Card from "components/card";
-import {
-  lineChartDataTotalSpent,
-  lineChartOptionsTotalSpent,
-} from "variables/charts";
-import LineChart from "components/charts/LineChart";
+import { LineChart } from "@mui/x-charts/LineChart";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
-const HumidityCard = () => {
+const TemperatureCard = () => {
+  const userData = useSelector((state) => state.auth?.data);
+  const isAuth = useSelector((state) => state.auth?.data);
+  const [temperatureData, setTemperatureData] = useState([]);
+  const [timestamps, setTimestamps] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTemperatureData = async () => {
+
+
+      try {
+        const response = await axios.get(
+          `http://localhost:4444/hum/${userData.deviceId}`
+        );
+        const data = response.data;
+
+        // Ensure the data is in the correct format
+        const tempData = data.map((d) => parseFloat(d.temperature));
+        const timeData = data.map(
+          (d) =>
+            new Date(d.timestamp).getHours() +
+            new Date(d.timestamp).getMinutes() / 60
+        );
+
+        setTemperatureData(tempData);
+        setTimestamps(timeData);
+        setError(null); // Clear any previous errors
+      } catch (error) {
+        console.error("Error fetching temperature data:", error);
+      }
+    };
+
+    fetchTemperatureData();
+  }, [userData]);
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
   return (
     <Card extra="!p-[20px] text-center">
-      <div className="flex justify-between">
-        <button className="linear mt-1 flex items-center justify-center gap-2 rounded-lg bg-lightPrimary p-2 text-gray-600 transition duration-200 hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 dark:bg-navy-700 dark:hover:opacity-90 dark:active:opacity-80">
-          <MdOutlineCalendarToday />
-          <span className="text-sm font-medium text-gray-600">Period</span>
-        </button>
-        <button className="!linear z-[1] flex items-center justify-center rounded-lg bg-lightPrimary p-2 text-brand-500 !transition !duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-navy-700 dark:text-white dark:hover:bg-white/20 dark:active:bg-white/10">
-          <MdBarChart className="h-6 w-6" />
-        </button>
-      </div>
-
       <div className="flex h-full w-full flex-row justify-between sm:flex-wrap lg:flex-nowrap 2xl:overflow-hidden">
         <div className="flex flex-col">
           <p className="mt-[20px] text-3xl font-bold text-navy-700 dark:text-white">
@@ -32,20 +59,40 @@ const HumidityCard = () => {
           <div className="flex flex-col items-start">
             <p className="mt-2 text-sm text-gray-600">Change (24h)</p>
             <div className="flex flex-row items-center justify-center">
-              <MdArrowDropUp className="font-medium text-green-500" />
-              <p className="text-sm font-bold text-green-500"> +2.45% </p>
             </div>
           </div>
         </div>
-        <div className="h-full w-full">
+        {isAuth ? (
+
+
+          
+            <LineChart
+              height={200}
+              xAxis={[{ data: timestamps }]}
+              series={[
+                {
+                  data: temperatureData,
+                },
+              ]}
+
+            />
+
+        ) : (
+
           <LineChart
-            options={lineChartOptionsTotalSpent}
-            series={lineChartDataTotalSpent}
+          height={200}
+            xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+            series={[
+              {
+                data: [2, 5.5, 2, 8.5, 1.5, 5],
+              },
+            ]}
           />
-        </div>
+
+        )}
       </div>
     </Card>
   );
 };
 
-export default HumidityCard;
+export default TemperatureCard;

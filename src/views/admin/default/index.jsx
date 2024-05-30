@@ -73,9 +73,7 @@ const Dashboard = () => {
 
         <div className="grid grid-cols-1 gap-5 rounded-[20px] md:grid-cols-2">
           <PieChartCard />
-          <div className="grid grid-cols-1 gap-5 rounded-[20px] md:grid-cols-1">
-          <MiniCalendar />
-          </div>
+
         </div>
         
 

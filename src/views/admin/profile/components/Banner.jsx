@@ -28,7 +28,7 @@ const Banner = () => {
         <h4 className="text-xl font-bold text-navy-700 dark:text-white">
           {isAuth ? <>{userData.fullName}</> : <>Guest</>}
         </h4>
-        <p className="text-base font-normal text-gray-600">Junior+++</p>
+        <p className="text-base font-normal text-gray-600">User</p>
       </div>
 
       {/* Post followers */}

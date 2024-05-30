@@ -12,7 +12,7 @@ const Upload = () => {
           Check recent news in social media
         </h5>
         <p className="leading-1 mt-2 text-base font-normal text-gray-600">
-          GOYDA!!!
+
         </p>
         <button
           href=" "

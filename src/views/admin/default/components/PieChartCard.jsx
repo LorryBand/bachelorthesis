@@ -1,44 +1,81 @@
-import PieChart from "components/charts/PieChart";
-import { pieChartData, pieChartOptions } from "variables/charts";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import Card from "components/card";
+import { PieChart } from "@mui/x-charts/PieChart";
 
 const PieChartCard = () => {
+  const userData = useSelector((state) => state.auth?.data);
+  const [chartData, setChartData] = useState([]);
+  const [error, setError] = useState(null);
+  const isAuth = useSelector((state) => state.auth?.data);
+  useEffect(() => {
+    const fetchTemperatureData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:4444/mq5/${userData.deviceId}`
+        );
+        const data = response.data;
+        console.log(data);
+
+        // Ensure the data is in the correct format and sort it
+        const zeros = data.filter((value) => value.temperature === 0).length;
+        const ones = data.filter((value) => value.temperature === 1).length;
+
+        console.log(zeros);
+
+        const total = zeros + ones;
+        const zeroPercentage = ((zeros / total) * 100).toFixed(2);
+        const onePercentage = ((ones / total) * 100).toFixed(2);
+
+        setChartData([
+          { id: 0, value: parseFloat(zeroPercentage), label: "Zeros" },
+          { id: 1, value: parseFloat(onePercentage), label: "Ones" },
+        ]);
+      } catch (error) {
+        console.error("Error fetching temperature data:", error);
+        setError(error);
+      }
+    };
+
+    if (userData) {
+      fetchTemperatureData();
+    }
+  }, [userData]);
+
   return (
     <Card extra="rounded-[20px] p-3">
       <div className="flex flex-row justify-between px-3 pt-2">
         <div>
           <h4 className="text-lg font-bold text-navy-700 dark:text-white">
-            Enviromental condition (24h)
+            Environmental Condition (24h)
           </h4>
         </div>
-
       </div>
 
       <div className="mb-auto flex h-[220px] w-full items-center justify-center">
-        <PieChart options={pieChartOptions} series={pieChartData} />
-      </div>
-      <div className="flex flex-row !justify-between rounded-2xl px-6 py-3 shadow-2xl shadow-shadow-500 dark:!bg-navy-700 dark:shadow-none">
-        <div className="flex flex-col items-center justify-center">
-          <div className="flex items-center justify-center">
-            <div className="h-2 w-2 rounded-full bg-brand-500" />
-            <p className="ml-1 text-sm font-normal text-gray-600">Normal</p>
-          </div>
-          <p className="mt-px text-xl font-bold text-navy-700  dark:text-white">
-            70%
-          </p>
-        </div>
-
-        <div className="h-11 w-px bg-gray-300 dark:bg-white/10" />
-
-        <div className="flex flex-col items-center justify-center">
-          <div className="flex items-center justify-center">
-            <div className="h-2 w-2 rounded-full bg-[#6AD2FF]" />
-            <p className="ml-1 text-sm font-normal text-gray-600">Not Normal</p>
-          </div>
-          <p className="mt-px text-xl font-bold text-navy-700 dark:text-white">
-            30%
-          </p>
-        </div>
+        {isAuth ? (
+          <PieChart
+            series={[
+              {
+                data: chartData,
+              },
+            ]}
+            className="h-full w-full"
+          />
+        ) : (
+          <PieChart
+            series={[
+              {
+                data: [
+                  { id: 0, value: 10, label: "series A" },
+                  { id: 1, value: 15, label: "series B" },
+                ],
+              },
+            ]}
+            height={200}
+          />
+        )}
       </div>
     </Card>
   );
